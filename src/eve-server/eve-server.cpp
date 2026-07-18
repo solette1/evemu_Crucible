@@ -106,6 +106,7 @@
 // exploration services
 #include "exploration/ScanMgrService.h"
 // faction services
+#include "faction/FactionTerritoryMgr.h"
 #include "faction/FactionWarMgrService.h"
 #include "faction/WarRegistryService.h"
 // fleet services
@@ -823,6 +824,8 @@ int main( int argc, char* argv[] )
     std::printf("\n");     // spacer
     svDataMgr.Initialize();
     std::printf("\n");     // spacer
+    sFactionTerritoryMgr.Initialize();
+    std::printf("\n");     // spacer
 
     // clear dynamic system data (player counts, etc) on server start
     MapDB::SystemStartup();
@@ -952,6 +955,8 @@ int main( int argc, char* argv[] )
     sStatMgr.Close();
     /* Close the standings manager */
     sStandingMgr.Close();
+    /* Close the faction territory manager */
+    sFactionTerritoryMgr.Close();
     sLog.Warning("   ServerShutdown", "Saving Items." );
     if (!sConsole.IsDbError())
         sItemFactory.SaveItems();

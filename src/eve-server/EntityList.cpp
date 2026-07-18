@@ -47,6 +47,7 @@
 #include "system/cosmicMgrs/WormholeMgr.h"
 #include "system/cosmicMgrs/ManagerDB.h"
 #include "corporation/CorporationDB.h"
+#include "faction/FactionTerritoryMgr.h"
 
 EntityList::EntityList()
 : m_services(nullptr),
@@ -249,6 +250,7 @@ void EntityList::Process() {
         // these need 1Hz tics
         sCivMgr.Process();
         sBubbleMgr.Process();
+        sFactionTerritoryMgr.Process();
 
         // these minute tics do not need to be precise
         if (m_minuteTimer.Check()) {

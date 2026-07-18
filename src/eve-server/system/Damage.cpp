@@ -32,6 +32,7 @@
 #include "Client.h"
 #include "EntityList.h"
 #include "EVEServerConfig.h"
+#include "faction/FactionTerritoryMgr.h"
 #include "manufacturing/Blueprint.h"
 #include "map/MapDB.h"
 #include "npc/NPC.h"
@@ -491,6 +492,16 @@ void ShipSE::Killed(Damage &fatal_blow) {
             totalHP += m_self->GetAttribute(AttrArmorHP).get_int();
             totalHP += m_self->GetAttribute(AttrShieldCapacity).get_int();
         data.victimDamageTaken = totalHP;
+
+    if ((data.finalFactionID > 0) and (data.victimFactionID > 0) and (data.finalFactionID != data.victimFactionID)) {
+        // TODO: add additional territory influence sources (e.g. FW site completion/objective captures).
+        sFactionTerritoryMgr.ApplyFactionInfluence(
+            locationID,
+            data.finalFactionID,
+            data.victimFactionID,
+            sConfig.factionTerritory.PointsKill,
+            "kill");
+    }
 
     std::stringstream blob;
     std::vector<InventoryItemRef> survivedItems;

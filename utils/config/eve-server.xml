@@ -224,6 +224,14 @@ boolean can use either 0/1 OR true/false.
         <Complex>4</Complex><!-- integer  -1 to disable.  max 128.  default 4 -->
     </exploring>
 
+    <factionTerritory>
+        <TickIntervalSeconds>10</TickIntervalSeconds><!-- seconds (5-30 recommended) -->
+        <DecayRate>1.0</DecayRate><!-- contest points removed per tick -->
+        <FlipThreshold>100.0</FlipThreshold><!-- system flips at or above this contest level -->
+        <PointsKill>5.0</PointsKill><!-- server-side points granted for ship-kill territory events -->
+        <PointsSiteCompletion>20.0</PointsSiteCompletion><!-- placeholder points for objective/site completion -->
+    </factionTerritory>
+
     <testing><!-- switches for various incomplete/testing code sections -->
         <ShipHeat>false</ShipHeat><!-- bool -->
         <EnableDrones>true</EnableDrones><!-- bool -->

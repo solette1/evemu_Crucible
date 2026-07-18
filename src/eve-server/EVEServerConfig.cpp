@@ -186,6 +186,13 @@ EVEServerConfig::EVEServerConfig()
     exploring.Unrated = 8;
     exploring.Complex = 4;
 
+    // faction territory
+    factionTerritory.TickIntervalSeconds = 10;
+    factionTerritory.DecayRate = 1.0f;
+    factionTerritory.FlipThreshold = 100.0f;
+    factionTerritory.PointsKill = 5.0f;
+    factionTerritory.PointsSiteCompletion = 20.0f;
+
     // standings
     //  - mission
     standings.MissionBonus = 1.0;
@@ -284,6 +291,7 @@ bool EVEServerConfig::ProcessEveServer( const TiXmlElement* ele )
     AddMemberParser( "npc",         &EVEServerConfig::ProcessNPC );
     AddMemberParser( "cosmic",      &EVEServerConfig::ProcessCosmic );
     AddMemberParser( "exploring",   &EVEServerConfig::ProcessExploring );
+    AddMemberParser( "factionTerritory",   &EVEServerConfig::ProcessFactionTerritory );
     AddMemberParser( "crime",       &EVEServerConfig::ProcessCrime );
     AddMemberParser( "standings",   &EVEServerConfig::ProcessStandings );
     AddMemberParser( "chat",        &EVEServerConfig::ProcessChat );
@@ -308,6 +316,7 @@ bool EVEServerConfig::ProcessEveServer( const TiXmlElement* ele )
     RemoveParser( "npc" );
     RemoveParser( "cosmic" );
     RemoveParser( "exploring" );
+    RemoveParser( "factionTerritory" );
     RemoveParser( "crime" );
     RemoveParser( "standings" );
     RemoveParser( "chat" );
@@ -526,6 +535,25 @@ bool EVEServerConfig::ProcessBPTimes(const TiXmlElement* ele)
     RemoveParser( "ResPE" );
     RemoveParser( "ReTime" );
     RemoveParser( "InventTime" );
+
+    return result;
+}
+
+bool EVEServerConfig::ProcessFactionTerritory(const TiXmlElement* ele)
+{
+    AddValueParser( "TickIntervalSeconds",      factionTerritory.TickIntervalSeconds );
+    AddValueParser( "DecayRate",                factionTerritory.DecayRate );
+    AddValueParser( "FlipThreshold",            factionTerritory.FlipThreshold );
+    AddValueParser( "PointsKill",               factionTerritory.PointsKill );
+    AddValueParser( "PointsSiteCompletion",     factionTerritory.PointsSiteCompletion );
+
+    const bool result = ParseElementChildren( ele );
+
+    RemoveParser( "TickIntervalSeconds" );
+    RemoveParser( "DecayRate" );
+    RemoveParser( "FlipThreshold" );
+    RemoveParser( "PointsKill" );
+    RemoveParser( "PointsSiteCompletion" );
 
     return result;
 }

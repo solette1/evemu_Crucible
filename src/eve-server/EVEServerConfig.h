@@ -284,6 +284,15 @@ public:
         int8 Complex;
     } exploring;
 
+    // From <factionTerritory>
+    struct {
+        uint8 TickIntervalSeconds;
+        float DecayRate;
+        float FlipThreshold;
+        float PointsKill;
+        float PointsSiteCompletion;
+    } factionTerritory;
+
     // From <standings>
     struct {
         float MissionBonus;
@@ -358,6 +367,7 @@ protected:
     bool ProcessThreads( const TiXmlElement* ele );
     bool ProcessCosmic( const TiXmlElement* ele );
     bool ProcessExploring( const TiXmlElement* ele );
+    bool ProcessFactionTerritory( const TiXmlElement* ele );
     bool ProcessStandings( const TiXmlElement* ele );
     bool ProcessChat( const TiXmlElement* ele );
     bool ProcessCrime( const TiXmlElement* ele );

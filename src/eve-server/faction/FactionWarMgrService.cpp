@@ -28,6 +28,7 @@
 
 
 #include "cache/ObjCacheService.h"
+#include "faction/FactionTerritoryMgr.h"
 #include "faction/FactionWarMgrService.h"
 
 /*
@@ -53,6 +54,7 @@ FactionWarMgrService::FactionWarMgrService(EVEServiceManager& mgr) :
     this->Add("GetCharacterRankInfo", &FactionWarMgrService::GetCharacterRankInfo);
     this->Add("GetFactionalWarStatus", &FactionWarMgrService::GetFactionalWarStatus);
     this->Add("GetSystemStatus", &FactionWarMgrService::GetSystemStatus);
+    this->Add("GetTerritoryState", &FactionWarMgrService::GetTerritoryState);
     this->Add("IsEnemyFaction", &FactionWarMgrService::IsEnemyFaction);
     this->Add("JoinFactionAsCharacter", &FactionWarMgrService::JoinFactionAsCharacter);
     this->Add("GetCorporationWarFactionID", &FactionWarMgrService::GetCorporationWarFactionID);
@@ -212,6 +214,16 @@ PyResult FactionWarMgrService::GetSystemStatus(PyCallArgs &call, PyInt* solarsys
     _log(FACWAR__CALL, "FacWarMgr::Handle_GetSystemStatus()");
     call.Dump(FACWAR__CALL_DUMP);
     return new PyInt(FacWar::SysStatus::None);
+}
+
+PyResult FactionWarMgrService::GetTerritoryState(PyCallArgs& call, PyInt* solarSystemID) {
+    FactionTerritoryState state = sFactionTerritoryMgr.GetSystemTerritoryState(solarSystemID->value());
+    PyDict* dict = new PyDict();
+    dict->SetItemString("solarSystemID", new PyInt(state.solarSystemID));
+    dict->SetItemString("occupyingFactionID", new PyInt(state.occupyingFactionID));
+    dict->SetItemString("contested", new PyBool(state.contested));
+    dict->SetItemString("contestLevel", new PyFloat(state.contestLevel));
+    return new PyObject("util.KeyVal", dict);
 }
 
 // these next two should use static data or cached data to avoid db hits
@@ -432,4 +444,3 @@ PyResult FactionWarMgrService::RefreshCorps(PyCallArgs &call) {
 
     return nullptr;
 }
-
