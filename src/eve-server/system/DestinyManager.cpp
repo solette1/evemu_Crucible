@@ -1063,7 +1063,12 @@ void DestinyManager::Turn() {   // tracking within 900m for Frigates, 1k4m for B
             turnPercent = m_degPerTic / (degrees - 100);
         }
     } else if (degrees > m_degPerTic) {
-        turnPercent = m_degPerTic / (degrees * 0.5);
+        // was: m_degPerTic / (degrees * 0.5) -- the spurious *0.5 doubled turnPercent,
+        // pushing it past 1.0 (into the 0.9 clamp below) for any degrees roughly between
+        // m_degPerTic and 2*m_degPerTic. That forced an oversized heading snap on the final
+        // stretch of alignment instead of a smooth approach, producing exactly the
+        // "warp align/speed is incorrect, but time > shipTimeToWarp" errors seen in testing.
+        turnPercent = m_degPerTic / degrees;
     } else {
         // degrees < m_degPerTic, so complete turn and continue accel
         if (m_decel)
