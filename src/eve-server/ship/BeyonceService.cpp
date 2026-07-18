@@ -533,7 +533,17 @@ PyResult BeyonceBound::CmdWarpToStuff(PyCallArgs &call, PyString* type, PyRep* i
         } else if (pSE->IsCOSE()) {
             distance += (radius / 2);
         } else if (pSE->IsGateSE()) {
-            distance += (radius / 3);  // fudge the distance a bit for gates... its' a lil close by default
+            // NOTE: previously this branch also added `distance += (radius / 3)` here,
+            // ON TOP OF the generic `warpToPoint -= (vectorFromOrigin * radius)` pullback
+            // below (gates always have radius < 90000, so they always hit that generic
+            // block too). That meant the computed arrival point was offset TWICE from two
+            // different vectors/snapshots, which could push the ship's simulated position
+            // past the true stopping point on arrival. Since Destiny's real heading
+            // calculation (Ball::CalculateYawPitchRoll) derives ship facing from
+            // (mGoto - mNewPos) freshly every tick, any overshoot of that point instantly
+            // flips the sign of that vector -- producing a 180-degree snap right as the
+            // ship arrives at the gate. Gates now fall through to the single generic
+            // radius pullback below, same as every other small-radius object type.
         } else if (pSE->IsMoonSE()) {
             if (pSE->GetMoonSE()->HasTower()) {
                 // if moon has a tower, make warpin point 20km inside edge of tower's bubble.
@@ -618,7 +628,22 @@ PyResult BeyonceBound::CmdWarpToStuffAutopilot(PyCallArgs &call, PyInt* destID) 
     uint16 distance = sConfig.world.apWarptoDistance;    //10km default
     //Adding in ship and target object radius'
     //distance += call.client->GetShipSE()->GetRadius() + pSE->GetRadius();
-    pDestiny->WarpTo(pSE->GetPosition(), distance, true, pSE);
+
+    // Compute the actual arrival point the same way CmdWarpToStuff does, instead of
+    // handing WarpTo() the target's raw, un-adjusted position. Previously this was the
+    // only warp path with NO radius correction at all, so autopilot warp and manual warp
+    // could arrive at two different points for the same gate/object, and autopilot warp
+    // specifically was more prone to overshooting small objects like gates.
+    GPoint warpToPoint = pSE->GetPosition();
+    double radius = pSE->GetRadius();
+    if (radius < 90000) {
+        GVector vectorFromOrigin(call.client->GetShipSE()->GetPosition(), warpToPoint);
+        vectorFromOrigin.normalize();   // we now have a direction
+        GPoint stopPoint = (vectorFromOrigin * radius);
+        warpToPoint -= stopPoint;
+    }
+
+    pDestiny->WarpTo(warpToPoint, distance, true, pSE);
 
     return PyStatic.NewNone();
 }
