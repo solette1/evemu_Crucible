@@ -42,6 +42,7 @@ protected:
     PyResult GetMyCharacterRankInfo(PyCallArgs& call);
     PyResult GetFactionMilitiaCorporation(PyCallArgs& call, PyInt* factionID);
     PyResult GetSystemStatus(PyCallArgs& call, PyInt* solarsystemID, PyInt* warFactionID);
+    PyResult GetTerritoryState(PyCallArgs& call, PyInt* solarSystemID);
     PyResult IsEnemyFaction(PyCallArgs& call, PyInt* enemyID, PyInt* factionID);
     PyResult IsEnemyCorporation(PyCallArgs& call, PyInt* enemyID, PyInt* factionID);
     PyResult GetCharacterRankInfo(PyCallArgs& call, PyInt* characterID);
@@ -75,5 +76,4 @@ private:
 };
 
 #endif /* __FACTION_WAR_MGR_SERVICE__H__INCL__ */
-
 
